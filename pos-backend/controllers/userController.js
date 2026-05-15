@@ -1,6 +1,5 @@
 const createHttpError = require("http-errors");
 const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
 
@@ -14,19 +13,14 @@ const register = async (req, res, next) => {
             return next(error);
         }
 
-        const isUserPresent = await User.findOne({email});
+        const isUserPresent = User.findByEmail(email);
         if(isUserPresent){
             const error = createHttpError(400, "User already exist!");
             return next(error);
         }
 
-
-        const user = { name, phone, email, password, role };
-        const newUser = User(user);
-        await newUser.save();
-
+        const newUser = await User.create({ name, phone, email, password, role });
         res.status(201).json({success: true, message: "New user created!", data: newUser});
-
 
     } catch (error) {
         next(error);
@@ -45,33 +39,35 @@ const login = async (req, res, next) => {
             return next(error);
         }
 
-        const isUserPresent = await User.findOne({email});
+        const isUserPresent = User.findByEmail(email);
         if(!isUserPresent){
             const error = createHttpError(401, "Invalid Credentials");
             return next(error);
         }
 
-        const isMatch = await bcrypt.compare(password, isUserPresent.password);
+        const isMatch = await User.comparePassword(password, isUserPresent.password);
         if(!isMatch){
             const error = createHttpError(401, "Invalid Credentials");
             return next(error);
         }
 
-        const accessToken = jwt.sign({_id: isUserPresent._id}, config.accessTokenSecret, {
+        const accessToken = jwt.sign({id: isUserPresent.id}, config.accessTokenSecret, {
             expiresIn : '1d'
         });
 
+        const isProduction = config.nodeEnv === "production";
+
         res.cookie('accessToken', accessToken, {
-            maxAge: 1000 * 60 * 60 *24 * 30,
+            maxAge: 1000 * 60 * 60 * 24 * 30,
             httpOnly: true,
-            sameSite: 'none',
-            secure: true
+            sameSite: isProduction ? 'none' : 'lax',
+            secure: isProduction
         })
 
+        const userData = User.findById(isUserPresent.id);
         res.status(200).json({success: true, message: "User login successfully!", 
-            data: isUserPresent
+            data: userData
         });
-
 
     } catch (error) {
         next(error);
@@ -82,7 +78,7 @@ const login = async (req, res, next) => {
 const getUserData = async (req, res, next) => {
     try {
         
-        const user = await User.findById(req.user._id);
+        const user = User.findById(req.user.id);
         res.status(200).json({success: true, data: user});
 
     } catch (error) {

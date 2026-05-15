@@ -32,9 +32,13 @@ const BottomNav = () => {
   const isActive = (path) => location.pathname === path;
 
   const handleCreateOrder = () => {
-    // send the data to store
-    dispatch(setCustomer({name, phone, guests: guestCount}));
-    navigate("/tables");
+    // send the data to store — name/phone optional, defaults to Walk-in
+    dispatch(setCustomer({
+      name: name || "Walk-in",
+      phone: phone || "",
+      guests: guestCount || 1,
+    }));
+    navigate("/menu");
   }
 
   return (
@@ -43,7 +47,7 @@ const BottomNav = () => {
         onClick={() => navigate("/")}
         className={`flex items-center justify-center font-bold ${
           isActive("/") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-        } w-[300px] rounded-[20px]`}
+        } flex-1 rounded-[20px] text-xs sm:text-sm`}
       >
         <FaHome className="inline mr-2" size={20} /> <p>Home</p>
       </button>
@@ -51,7 +55,7 @@ const BottomNav = () => {
         onClick={() => navigate("/orders")}
         className={`flex items-center justify-center font-bold ${
           isActive("/orders") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-        } w-[300px] rounded-[20px]`}
+        } flex-1 rounded-[20px] text-xs sm:text-sm`}
       >
         <MdOutlineReorder className="inline mr-2" size={20} /> <p>Orders</p>
       </button>
@@ -59,18 +63,18 @@ const BottomNav = () => {
         onClick={() => navigate("/tables")}
         className={`flex items-center justify-center font-bold ${
           isActive("/tables") ? "text-[#f5f5f5] bg-[#343434]" : "text-[#ababab]"
-        } w-[300px] rounded-[20px]`}
+        } flex-1 rounded-[20px] text-xs sm:text-sm`}
       >
         <MdTableBar className="inline mr-2" size={20} /> <p>Tables</p>
       </button>
-      <button className="flex items-center justify-center font-bold text-[#ababab] w-[300px]">
+      <button className="flex items-center justify-center font-bold text-[#ababab] flex-1 text-xs sm:text-sm">
         <CiCircleMore className="inline mr-2" size={20} /> <p>More</p>
       </button>
 
       <button
         disabled={isActive("/tables") || isActive("/menu")}
         onClick={openModal}
-        className="absolute bottom-6 bg-[#F6B100] text-[#f5f5f5] rounded-full p-4 items-center"
+        className="absolute bottom-6 brand-bg rounded-full p-4 items-center"
       >
         <BiSolidDish size={40} />
       </button>
@@ -96,7 +100,7 @@ const BottomNav = () => {
             <button onClick={increment} className="text-yellow-500 text-2xl">&#43;</button>
           </div>
         </div>
-        <button onClick={handleCreateOrder} className="w-full bg-[#F6B100] text-[#f5f5f5] rounded-lg py-3 mt-8 hover:bg-yellow-700">
+        <button onClick={handleCreateOrder} className="w-full brand-bg rounded-lg py-3 mt-8 hover:bg-[#9fbe3f]">
           Create Order
         </button>
       </Modal>

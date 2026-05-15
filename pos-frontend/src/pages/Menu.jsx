@@ -11,16 +11,16 @@ import { useSelector } from "react-redux";
 const Menu = () => {
 
     useEffect(() => {
-      document.title = "POS | Menu"
+      document.title = "FitBite POS | Menu"
     }, [])
 
   const customerData = useSelector((state) => state.customer);
 
   return (
-    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex gap-3">
+    <section className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] lg:h-[calc(100vh-5rem)] overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row gap-3">
       {/* Left Div */}
       <div className="flex-[3]">
-        <div className="flex items-center justify-between px-10 py-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-10 py-4 gap-4">
           <div className="flex items-center gap-4">
             <BackButton />
             <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
@@ -45,7 +45,7 @@ const Menu = () => {
         <MenuContainer />
       </div>
       {/* Right Div */}
-      <div className="flex-[1] bg-[#1a1a1a] mt-4 mr-3 h-[780px] rounded-lg pt-2">
+      <div className="flex-[1] bg-[#1a1a1a] mt-0 lg:mt-4 mr-0 lg:mr-3 h-auto lg:max-h-[calc(100vh-7rem)] rounded-lg pt-2 overflow-y-auto scrollbar-hide">
         {/* Customer Info */}
         <CustomerInfo />
         <hr className="border-[#2a2a2a] border-t-2" />

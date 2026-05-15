@@ -2,6 +2,7 @@ const Razorpay = require("razorpay");
 const config = require("../config/config");
 const crypto = require("crypto");
 const Payment = require("../models/paymentModel");
+const createHttpError = require("http-errors");
 
 const createOrder = async (req, res, next) => {
   const razorpay = new Razorpay({
@@ -68,7 +69,7 @@ const webHookVerification = async (req, res, next) => {
         console.log(`💰 Payment Captured: ${payment.amount / 100} INR`);
 
         // Add Payment Details in Database
-        const newPayment = new Payment({
+        Payment.create({
           paymentId: payment.id,
           orderId: payment.order_id,
           amount: payment.amount / 100,
@@ -76,11 +77,8 @@ const webHookVerification = async (req, res, next) => {
           status: payment.status,
           method: payment.method,
           email: payment.email,
-          contact: payment.contact,
-          createdAt: new Date(payment.created_at * 1000) 
-        })
-
-        await newPayment.save();
+          contact: payment.contact
+        });
       }
 
       res.json({ success: true });

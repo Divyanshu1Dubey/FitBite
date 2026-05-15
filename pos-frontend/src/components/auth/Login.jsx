@@ -34,8 +34,10 @@ const Login = () => {
           navigate("/");
       },
       onError: (error) => {
-        const { response } = error;
-        enqueueSnackbar(response.data.message, { variant: "error" });
+        const message =
+          error?.response?.data?.message ||
+          "Login failed. Please check your server and network.";
+        enqueueSnackbar(message, { variant: "error" });
       }
     })
 

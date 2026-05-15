@@ -3,7 +3,7 @@ import { popularDishes } from "../../constants";
 
 const PopularDishes = () => {
   return (
-    <div className="mt-6 pr-6">
+    <div className="mt-6 pr-0 lg:pr-6">
       <div className="bg-[#1a1a1a] w-full rounded-lg">
         <div className="flex justify-between items-center px-6 py-4">
           <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
@@ -14,7 +14,7 @@ const PopularDishes = () => {
           </a>
         </div>
 
-        <div className="overflow-y-scroll h-[680px] scrollbar-hide">
+        <div className="overflow-y-scroll h-[420px] lg:h-[680px] scrollbar-hide">
           {popularDishes.map((dish) => {
             return (
               <div

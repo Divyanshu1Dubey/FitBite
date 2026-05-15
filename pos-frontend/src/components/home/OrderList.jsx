@@ -3,24 +3,30 @@ import { FaCheckDouble, FaLongArrowAltRight } from "react-icons/fa";
 import { FaCircle } from "react-icons/fa";
 import { getAvatarName } from "../../utils/index";
 
-const OrderList = ({ key, order }) => {
+const OrderList = ({ order }) => {
   return (
     <div className="flex items-center gap-5 mb-3">
       <button className="bg-[#f6b100] p-3 text-xl font-bold rounded-lg">
-        {getAvatarName(order.customerDetails.name)}
+        {getAvatarName(order.customerDetails?.name)}
       </button>
       <div className="flex items-center justify-between w-[100%]">
         <div className="flex flex-col items-start gap-1">
           <h1 className="text-[#f5f5f5] text-lg font-semibold tracking-wide">
-            {order.customerDetails.name}
+            {order.customerDetails?.name || "Walk-in"}
           </h1>
           <p className="text-[#ababab] text-sm">{order.items.length} Items</p>
         </div>
 
-        <h1 className="text-[#f6b100] font-semibold border border-[#f6b100] rounded-lg p-1">
-          Table <FaLongArrowAltRight className="text-[#ababab] ml-2 inline" />{" "}
-          {order.table.tableNo}
-        </h1>
+        {order.table ? (
+          <h1 className="text-[#f6b100] font-semibold border border-[#f6b100] rounded-lg p-1">
+            Table <FaLongArrowAltRight className="text-[#ababab] ml-2 inline" />{" "}
+            {order.table.tableNo}
+          </h1>
+        ) : (
+          <h1 className="text-[#ababab] font-semibold border border-[#555] rounded-lg p-1">
+            Walk-in
+          </h1>
+        )}
 
         <div className="flex flex-col items-end gap-2">
           {order.orderStatus === "Ready" ? (

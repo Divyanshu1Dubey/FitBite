@@ -30,7 +30,7 @@ const Greetings = () => {
           Good Morning, {userData.name || "TEST USER"}
         </h1>
         <p className="text-[#ababab] text-sm">
-          Give your best services for customers 😀
+          Fuel every guest with clean energy and fast service.
         </p>
       </div>
       <div>

@@ -1,5 +1,5 @@
 const express = require("express");
-const connectDB = require("./config/database");
+const { initDB } = require("./config/database");
 const config = require("./config/config");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 const cookieParser = require("cookie-parser");
@@ -8,13 +8,19 @@ const app = express();
 
 
 const PORT = config.port;
-connectDB();
+initDB();
 
 // Middlewares
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:5173']
-}))
+const corsOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim());
+
+app.use(
+    cors({
+        credentials: true,
+        origin: corsOrigins,
+    })
+);
 app.use(express.json()); // parse incoming request in json format
 app.use(cookieParser())
 
@@ -29,6 +35,8 @@ app.use("/api/user", require("./routes/userRoute"));
 app.use("/api/order", require("./routes/orderRoute"));
 app.use("/api/table", require("./routes/tableRoute"));
 app.use("/api/payment", require("./routes/paymentRoute"));
+app.use("/api/category", require("./routes/categoryRoute"));
+app.use("/api/dish", require("./routes/dishRoute"));
 
 // Global Error Handler
 app.use(globalErrorHandler);

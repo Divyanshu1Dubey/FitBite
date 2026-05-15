@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { removeAllItems } from "../../redux/slices/cartSlice";
 import { removeCustomer } from "../../redux/slices/customerSlice";
 import Invoice from "../invoice/Invoice";
+import brand from "../../constants/brand";
 
 function loadScript(src) {
   return new Promise((resolve) => {
@@ -40,15 +41,24 @@ const Bill = () => {
   const [paymentMethod, setPaymentMethod] = useState();
   const [showInvoice, setShowInvoice] = useState(false);
   const [orderInfo, setOrderInfo] = useState();
+  const [isPlacing, setIsPlacing] = useState(false);
 
   const handlePlaceOrder = async () => {
+    if (cartData.length === 0) {
+      enqueueSnackbar("Add items to cart first!", {
+        variant: "warning",
+      });
+      return;
+    }
+
     if (!paymentMethod) {
       enqueueSnackbar("Please select a payment method!", {
         variant: "warning",
       });
-
       return;
     }
+
+    setIsPlacing(true);
 
     if (paymentMethod === "Online") {
       // load the script
@@ -76,7 +86,7 @@ const Bill = () => {
           key: `${import.meta.env.VITE_RAZORPAY_KEY_ID}`,
           amount: data.order.amount,
           currency: data.order.currency,
-          name: "RESTRO",
+          name: brand.name,
           description: "Secure Payment for Your Meal",
           order_id: data.order.id,
           handler: async function (response) {
@@ -87,9 +97,9 @@ const Bill = () => {
             // Place the order
             const orderData = {
               customerDetails: {
-                name: customerData.customerName,
-                phone: customerData.customerPhone,
-                guests: customerData.guests,
+                name: customerData.customerName || "Walk-in",
+                phone: customerData.customerPhone || "N/A",
+                guests: customerData.guests || 1,
               },
               orderStatus: "In Progress",
               bills: {
@@ -98,7 +108,7 @@ const Bill = () => {
                 totalWithTax: totalPriceWithTax,
               },
               items: cartData,
-              table: customerData.table.tableId,
+              table: customerData.table?.tableId || null,
               paymentMethod: paymentMethod,
               paymentData: {
                 razorpay_order_id: response.razorpay_order_id,
@@ -130,9 +140,9 @@ const Bill = () => {
       // Place the order
       const orderData = {
         customerDetails: {
-          name: customerData.customerName,
-          phone: customerData.customerPhone,
-          guests: customerData.guests,
+          name: customerData.customerName || "Walk-in",
+          phone: customerData.customerPhone || "N/A",
+          guests: customerData.guests || 1,
         },
         orderStatus: "In Progress",
         bills: {
@@ -141,7 +151,7 @@ const Bill = () => {
           totalWithTax: totalPriceWithTax,
         },
         items: cartData,
-        table: customerData.table.tableId,
+        table: customerData.table?.tableId || null,
         paymentMethod: paymentMethod,
       };
       orderMutation.mutate(orderData);
@@ -151,21 +161,27 @@ const Bill = () => {
   const orderMutation = useMutation({
     mutationFn: (reqData) => addOrder(reqData),
     onSuccess: (resData) => {
+      setIsPlacing(false);
       const { data } = resData.data;
       console.log(data);
 
       setOrderInfo(data);
 
-      // Update Table
-      const tableData = {
-        status: "Booked",
-        orderId: data._id,
-        tableId: data.table,
-      };
+      if (data.table) {
+        // Update Table
+        const tableData = {
+          status: "Booked",
+          orderId: data._id,
+          tableId: data.table,
+        };
 
-      setTimeout(() => {
-        tableUpdateMutation.mutate(tableData);
-      }, 1500);
+        setTimeout(() => {
+          tableUpdateMutation.mutate(tableData);
+        }, 1500);
+      } else {
+        dispatch(removeCustomer());
+        dispatch(removeAllItems());
+      }
 
       enqueueSnackbar("Order Placed!", {
         variant: "success",
@@ -174,6 +190,10 @@ const Bill = () => {
     },
     onError: (error) => {
       console.log(error);
+      setIsPlacing(false);
+      enqueueSnackbar("Failed to place order. Please try again.", {
+        variant: "error",
+      });
     },
   });
 
@@ -189,11 +209,21 @@ const Bill = () => {
     },
   });
 
+  const handleOpenInvoice = () => {
+    if (cartData.length === 0 && !orderInfo) {
+      enqueueSnackbar("Add items to cart first!", {
+        variant: "warning",
+      });
+      return;
+    }
+    setShowInvoice(true);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between px-5 mt-2">
         <p className="text-xs text-[#ababab] font-medium mt-2">
-          Items({cartData.lenght})
+          Items({cartData.length})
         </p>
         <h1 className="text-[#f5f5f5] text-md font-bold">
           ₹{total.toFixed(2)}
@@ -231,19 +261,41 @@ const Bill = () => {
       </div>
 
       <div className="flex items-center gap-3 px-5 mt-4">
-        <button className="bg-[#025cca] px-4 py-3 w-full rounded-lg text-[#f5f5f5] font-semibold text-lg">
+        <button
+          onClick={handleOpenInvoice}
+          className="brand-bg-strong px-4 py-3 w-full rounded-lg font-semibold text-lg"
+        >
           Print Receipt
         </button>
         <button
           onClick={handlePlaceOrder}
-          className="bg-[#f6b100] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg"
+          disabled={isPlacing}
+          className={`brand-bg px-4 py-3 w-full rounded-lg font-semibold text-lg ${isPlacing ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          Place Order
+          {isPlacing ? 'Placing...' : 'Place Order'}
         </button>
       </div>
 
       {showInvoice && (
-        <Invoice orderInfo={orderInfo} setShowInvoice={setShowInvoice} />
+        <Invoice 
+          orderInfo={orderInfo || {
+            _id: "PENDING",
+            createdAt: new Date().toISOString(),
+            customerDetails: {
+              name: customerData.customerName || "Walk-in",
+              phone: customerData.customerPhone || "N/A",
+              guests: customerData.guests || 1,
+            },
+            bills: {
+              total: total,
+              tax: tax,
+              totalWithTax: totalPriceWithTax,
+            },
+            items: cartData,
+            paymentMethod: paymentMethod || "Pending",
+          }} 
+          setShowInvoice={setShowInvoice} 
+        />
       )}
     </>
   );

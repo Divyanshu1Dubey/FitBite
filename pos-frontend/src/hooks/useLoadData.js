@@ -14,11 +14,11 @@ const useLoadData = () => {
       try {
         const { data } = await getUserData();
         console.log(data);
-        const { _id, name, email, phone, role } = data.data;
-        dispatch(setUser({ _id, name, email, phone, role }));
+        const { _id, id, name, email, phone, role } = data.data;
+        dispatch(setUser({ _id: _id || id, name, email, phone, role }));
       } catch (error) {
         dispatch(removeUser());
-        Navigate("/auth");
+        navigate("/auth");
         console.log(error);
       }finally{
         setIsLoading(false);

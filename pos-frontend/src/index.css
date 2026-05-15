@@ -1,11 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Karla:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --fitbite-bg: #0f1110;
+  --fitbite-surface: #191c18;
+  --fitbite-card: #1f221e;
+  --fitbite-accent: #b8d84f;
+  --fitbite-accent-strong: #9fbe3f;
+  --fitbite-muted: #a3a3a3;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Karla', sans-serif;
+  background: var(--fitbite-bg);
+  color: #f5f5f5;
+}
+
+.brand-display {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.brand-accent {
+  color: var(--fitbite-accent);
+}
+
+.brand-bg {
+  background-color: var(--fitbite-accent);
+  color: #0c100b;
+}
+
+.brand-bg-strong {
+  background-color: var(--fitbite-accent-strong);
+  color: #0c100b;
+}
+
+.brand-surface {
+  background-color: var(--fitbite-surface);
+}
+
+.brand-card {
+  background-color: var(--fitbite-card);
+}
+
+.brand-border {
+  border-color: var(--fitbite-accent);
 }
 
 /* FullScreenLoader.css */

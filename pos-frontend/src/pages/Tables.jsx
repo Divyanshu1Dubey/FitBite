@@ -10,7 +10,7 @@ const Tables = () => {
   const [status, setStatus] = useState("all");
 
     useEffect(() => {
-      document.title = "POS | Tables"
+      document.title = "FitBite POS | Tables"
     }, [])
 
   const { data: resData, isError } = useQuery({
@@ -28,15 +28,15 @@ const Tables = () => {
   console.log(resData);
 
   return (
-    <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
-      <div className="flex items-center justify-between px-10 py-4">
+    <section className="bg-[#1f1f1f] min-h-[calc(100vh-5rem)] lg:h-[calc(100vh-5rem)] overflow-y-auto lg:overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between px-4 sm:px-10 py-4 gap-4">
         <div className="flex items-center gap-4">
           <BackButton />
           <h1 className="text-[#f5f5f5] text-2xl font-bold tracking-wider">
             Tables
           </h1>
         </div>
-        <div className="flex items-center justify-around gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setStatus("all")}
             className={`text-[#ababab] text-lg ${
@@ -56,7 +56,7 @@ const Tables = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 px-4 sm:px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
         {resData?.data.data.map((table) => {
           return (
             <TableCard

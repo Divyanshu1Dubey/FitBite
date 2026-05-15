@@ -43,8 +43,9 @@ const Register = ({setIsRegister}) => {
       }, 1500);
     },
     onError: (error) => {
-      const { response } = error;
-      const message = response.data.message;
+      const message =
+        error?.response?.data?.message ||
+        "Registration failed. Please check your server and network.";
       enqueueSnackbar(message, { variant: "error" });
     },
   });
