@@ -36,7 +36,7 @@ const Header = () => {
   return (
     <header className="flex flex-col md:flex-row justify-between md:items-center gap-4 py-4 px-4 md:px-8 brand-surface">
       {/* LOGO */}
-      <div onClick={() => navigate("/")} className="flex items-center gap-3 cursor-pointer">
+      <div onClick={() => navigate("/pos")} className="flex items-center gap-3 cursor-pointer">
         <img src={logo} className="h-10 w-10 rounded-full" alt="FitBite logo" />
         <div className="flex flex-col">
           <h1 className="brand-display text-xl font-semibold text-[#f5f5f5]">
@@ -61,7 +61,7 @@ const Header = () => {
       {/* LOGGED USER DETAILS */}
       <div className="flex items-center gap-4">
         {userData.role === "Admin" && (
-          <div onClick={() => navigate("/dashboard")} className="brand-card rounded-[15px] p-3 cursor-pointer">
+          <div onClick={() => navigate("/pos/dashboard")} className="brand-card rounded-[15px] p-3 cursor-pointer">
             <MdDashboard className="text-[#f5f5f5] text-2xl" />
           </div>
         )}

@@ -112,39 +112,48 @@ const MenuContainer = () => {
           return (
             <div
               key={item.id}
-              className="flex flex-col items-start justify-between p-4 rounded-lg h-[150px] cursor-pointer hover:bg-[#2a2a2a] bg-[#1a1a1a]"
+              className="flex flex-col rounded-lg h-[240px] cursor-pointer hover:bg-[#2a2a2a] bg-[#1a1a1a] overflow-hidden"
             >
-              <div className="flex items-start justify-between w-full">
-                <h1 className="text-[#f5f5f5] text-lg font-semibold">
-                  {item.name}
-                </h1>
-                <button
-                  onClick={() => handleAddToCart(item)}
-                  className="bg-[#2e4a40] text-[#02ca3a] p-2 rounded-lg"
-                >
-                  <FaShoppingCart size={20} />
-                </button>
+              <div className="h-[100px] w-full bg-[#2a2a2a] relative shrink-0">
+                 {item.image ? (
+                   <img src={`/images/menu/${item.image}`} alt={item.name} className="w-full h-full object-cover" />
+                 ) : (
+                   <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm">No Image</div>
+                 )}
               </div>
-              <div className="flex items-center justify-between w-full">
-                <p className="text-[#f5f5f5] text-xl font-bold">
-                  ₹{item.price}
-                </p>
-                <div className="flex items-center justify-between bg-[#1f1f1f] px-4 py-3 rounded-lg gap-6 w-[50%]">
+              <div className="p-4 flex flex-col justify-between flex-grow">
+                <div className="flex items-start justify-between w-full gap-2">
+                  <h1 className="text-[#f5f5f5] text-base font-semibold leading-tight line-clamp-2">
+                    {item.name}
+                  </h1>
                   <button
-                    onClick={() => decrement(item.id)}
-                    className="text-yellow-500 text-2xl"
+                    onClick={() => handleAddToCart(item)}
+                    className="bg-[#2e4a40] text-[#02ca3a] p-2 rounded-lg shrink-0"
                   >
-                    &minus;
+                    <FaShoppingCart size={16} />
                   </button>
-                  <span className="text-white">
-                    {itemId === item.id ? itemCount : "0"}
-                  </span>
-                  <button
-                    onClick={() => increment(item.id)}
-                    className="text-yellow-500 text-2xl"
-                  >
-                    &#43;
-                  </button>
+                </div>
+                <div className="flex items-center justify-between w-full mt-2">
+                  <p className="text-[#f5f5f5] text-lg font-bold">
+                    ₹{item.price}
+                  </p>
+                  <div className="flex items-center justify-between bg-[#1f1f1f] px-3 py-1 rounded-lg gap-4 shrink-0">
+                    <button
+                      onClick={() => decrement(item.id)}
+                      className="text-yellow-500 text-xl leading-none"
+                    >
+                      &minus;
+                    </button>
+                    <span className="text-white text-sm">
+                      {itemId === item.id ? itemCount : "0"}
+                    </span>
+                    <button
+                      onClick={() => increment(item.id)}
+                      className="text-yellow-500 text-xl leading-none"
+                    >
+                      &#43;
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

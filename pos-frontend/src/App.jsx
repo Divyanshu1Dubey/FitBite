@@ -5,7 +5,17 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { Home, Auth, Orders, Tables, Menu, Dashboard } from "./pages";
+import { 
+  Home, 
+  Auth, 
+  Orders, 
+  Tables, 
+  Menu as POSMenu, 
+  Dashboard,
+  Mission,
+  ContactUs,
+  DigitalMenu
+} from "./pages";
 import Header from "./components/shared/Header";
 import { useSelector } from "react-redux";
 import useLoadData from "./hooks/useLoadData";
@@ -14,26 +24,36 @@ import FullScreenLoader from "./components/shared/FullScreenLoader"
 function Layout() {
   const isLoading = useLoadData();
   const location = useLocation();
-  const hideHeaderRoutes = ["/auth"];
   const { isAuth } = useSelector(state => state.user);
 
   if(isLoading) return <FullScreenLoader />
 
+  // Only show the POS Header if the user is in the /pos section
+  const isPosRoute = location.pathname.startsWith('/pos');
+
   return (
     <>
-      {!hideHeaderRoutes.includes(location.pathname) && <Header />}
+      {isPosRoute && <Header />}
       <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Mission />} />
+        <Route path="/menu" element={<DigitalMenu />} />
+        <Route path="/contact" element={<ContactUs />} />
+        
+        {/* Auth Route */}
+        <Route path="/auth" element={isAuth ? <Navigate to="/pos" /> : <Auth />} />
+
+        {/* Protected POS Routes */}
         <Route
-          path="/"
+          path="/pos"
           element={
             <ProtectedRoutes>
               <Home />
             </ProtectedRoutes>
           }
         />
-        <Route path="/auth" element={isAuth ? <Navigate to="/" /> : <Auth />} />
         <Route
-          path="/orders"
+          path="/pos/orders"
           element={
             <ProtectedRoutes>
               <Orders />
@@ -41,7 +61,7 @@ function Layout() {
           }
         />
         <Route
-          path="/tables"
+          path="/pos/tables"
           element={
             <ProtectedRoutes>
               <Tables />
@@ -49,22 +69,25 @@ function Layout() {
           }
         />
         <Route
-          path="/menu"
+          path="/pos/menu"
           element={
             <ProtectedRoutes>
-              <Menu />
+              <POSMenu />
             </ProtectedRoutes>
           }
         />
         <Route
-          path="/dashboard"
+          path="/pos/dashboard"
           element={
             <ProtectedRoutes>
               <Dashboard />
             </ProtectedRoutes>
           }
         />
-        <Route path="*" element={<div>Not Found</div>} />
+        
+        {/* Redirect unknown /pos routes back to /pos, and unknown public routes to / */}
+        <Route path="/pos/*" element={<Navigate to="/pos" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   );
